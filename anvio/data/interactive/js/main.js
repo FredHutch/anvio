@@ -171,14 +171,13 @@ $(document).ready(function() {
         }
     });
 
-    
     if (!$.browser.chrome)
     {
         toastr.warning("We tested anvi'o only on Google Chrome, and it seems you are using a different browser.\
                         For the best performance, and to avoid unexpected issues, please consider using anvi'o with\
                         the lastest version of Chrome.", "", { 'timeOut': '0', 'extendedTimeOut': '0' });
     } else {
-        darkModeCheck();
+        darkModeCheck(); // only called when client browser is chrome
     }
     initData();
 });
@@ -187,18 +186,15 @@ function darkModeCheck(){
     
     matcher = window.matchMedia('(prefers-color-scheme: dark)');
     matcher.addListener(themeCheck);
-
-    let lightThemeIcon = $('#light-theme-favicon');
-    let darkThemeIcon = $('#dark-theme-favicon');
     themeCheck();
 
     function themeCheck() {
         if (matcher.matches) {
-            lightThemeIcon.remove();
-            document.head.append(darkThemeIcon);
+            $('#light-theme-favicon').remove();
+            document.head.append($('#dark-theme-favicon'));
         } else {
-            document.head.append(lightThemeIcon);
-            darkThemeIcon.remove();
+            document.head.append($('#light-theme-favicon'));
+            $('#dark-theme-favicon').remove();
         }
     }
 }
