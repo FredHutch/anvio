@@ -177,13 +177,13 @@ $(document).ready(function() {
                         For the best performance, and to avoid unexpected issues, please consider using anvi'o with\
                         the lastest version of Chrome.", "", { 'timeOut': '0', 'extendedTimeOut': '0' });
     } else {
-        darkModeCheck(); // only called when client browser is chrome
+        darkModeCheck();
     }
     initData();
 });
 
 function darkModeCheck(){
-    
+    // for chrome users, dynamically adjust tab icon based on browser theme 
     matcher = window.matchMedia('(prefers-color-scheme: dark)');
     matcher.addListener(themeCheck);
     themeCheck();
