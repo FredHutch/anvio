@@ -88,6 +88,12 @@ ANVIO_ARTIFACTS ={
         "provided_by_anvio": False,
         "provided_by_user":True
     },
+    "fasta-txt": {
+        "name": "FASTA TXT",
+        "type": "TXT",
+        "provided_by_anvio": False,
+        "provided_by_user":True
+    },
     "raw-bam-file": {
         "name": "RAW BAM FILE",
         "type": "BAM",
@@ -571,6 +577,42 @@ ANVIO_ARTIFACTS ={
     "pn-ps-data": {
         "name": "PN/PS OUTPUT",
         "type": "CONCEPT",
+        "provided_by_anvio": True,
+        "provided_by_user": False
+    },
+    "workflow-config": {
+        "name": "WORKFLOW CONFIG",
+        "type": "JSON",
+        "provided_by_anvio": False,
+        "provided_by_user": True
+    },
+    "contigs-workflow": {
+        "name": "CONTIGS WORKFLOW",
+        "type": "WORKFLOW",
+        "provided_by_anvio": True,
+        "provided_by_user": False
+    },
+    "metagenomics-workflow": {
+        "name": "METAGENOMICS WORKFLOW",
+        "type": "WORKFLOW",
+        "provided_by_anvio": True,
+        "provided_by_user": False
+    },
+    "pangenomics-workflow": {
+        "name": "PANGENOMICS WORKFLOW",
+        "type": "WORKFLOW",
+        "provided_by_anvio": True,
+        "provided_by_user": False
+    },
+    "phylogenomics-workflow": {
+        "name": "PHYLOGENOMICS WORKFLOW",
+        "type": "WORKFLOW",
+        "provided_by_anvio": True,
+        "provided_by_user": False
+    },
+    "trnaseq-workflow": {
+        "name": "TRNASEQ WORKFLOW",
+        "type": "WORKFLOW",
         "provided_by_anvio": True,
         "provided_by_user": False
     }
