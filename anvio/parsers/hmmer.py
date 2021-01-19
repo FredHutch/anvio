@@ -548,6 +548,10 @@ class HMMERTableOutput(Parser):
             if program != 'hmmsearch':
                 raise ConfigError("HMMScan :: the 'DOMAIN' context is only available for hmmsearch.")
             col_info = self.get_col_info_for_DOMAIN_context()
+        elif self.context == "DOMAIN" and self.alphabet == "NT":
+            if program != 'hmmsearch':
+                raise ConfigError("HMMScan :: the 'DOMAIN' context is only available for hmmsearch.")
+            col_info = self.get_col_info_for_DOMAIN_context()
         else:
             raise ConfigError("HMMScan driver is confused. Yor context and alphabet pair ('%s' and '%s') "
                               "does not seem to be implemented in the parser module. If you think this is "
@@ -675,6 +679,7 @@ class HMMERTableOutput(Parser):
         for hit in list(self.dicts['hits'].values()):
             entry = None
             bit_score_info_dict_entry = None
+            print(hit)
 
             if self.context == 'GENE':
                 # Here we only add the hit to the annotations_dict if the appropriate bit score is above the

@@ -213,6 +213,7 @@ class TablesForHMMHits(Table):
             reference = sources[source]['ref']
             noise_cutoff_terms = sources[source]['noise_cutoff_terms']
 
+            print('asdf')
             hmm_scan_hits_txt = commander.run_hmmer(source,
                                                       alphabet,
                                                       context,
@@ -221,7 +222,8 @@ class TablesForHMMHits(Table):
                                                       len(all_genes_searched_against),
                                                       hmm_model,
                                                       reference,
-                                                      noise_cutoff_terms)
+                                                      noise_cutoff_terms,
+                                                      out_fmt="--domtblout")
 
             if not hmm_scan_hits_txt:
                 search_results_dict = {}
