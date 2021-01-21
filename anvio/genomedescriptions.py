@@ -876,33 +876,38 @@ class GenomeDescriptions(object):
         for g, genes_to_func in genome_to_func_summary_dict.items():
             for gc_id, func_annotations in genes_to_func.items():
                 for source, annotation_tuple in func_annotations.items():
-                    acc, function, eval = annotation_tuple
+                    accession, function, eval = annotation_tuple
 
                     ## okay, so here is an annoying thing. Currently gene calls with multiple annotations from the same source
-                    ## have these annotations separated by '!!!'. If we encounter this, we need to split it into multiple annotations.
-                    all_accessions = acc.split('!!!')
-                    all_annotations = function.split('!!!')
-                    if len(all_accessions) != len(all_annotations):
-                        acc_str = ", ".join(all_accessions)
-                        annot_str = ", ".join(all_annotations)
-                        raise ConfigError(f"Somethin' is drastically wrong here. In your genome {g} we found a gene call (id is {gc_id}) "
-                                          f"with multiple annotations, but the number of accession numbers is not equal to the number of "
-                                          f"functional annotations. Take a look at the list of accessions: {acc_str} and compare to the list of "
-                                          f"annotations: {annot_str}. Do you know what is wrong? If not, please contact the developers for assistance.")
+                    ## have these annotations separated by '!!!'. If we encounter this, we arbitrarily take the first one only.
+                    if '!!!' in accession:
+                        all_accessions = accession.split('!!!')
+                        all_annotations = function.split('!!!')
+                        if len(all_accessions) != len(all_annotations):
+                            acc_str = ", ".join(all_accessions)
+                            annot_str = ", ".join(all_annotations)
+                            raise ConfigError(f"Somethin' is drastically wrong here. In your genome {g} we found a gene call (id is {gc_id}) "
+                                              f"with multiple annotations, but the number of accession numbers is not equal to the number of "
+                                              f"functional annotations. Take a look at the list of accessions: {acc_str} and compare to the list of "
+                                              f"annotations: {annot_str}. Do you know what is wrong? If not, please contact the developers for assistance.")
+                        acc = all_accessions[0]
+                        func = all_annotations[0]
+                    else:
+                        acc = accession
+                        func = function
 
-                    for accession, func in zip(all_accessions, all_annotations):
-                        # by keying with the function name, we can automatically merge some accessions with same functional annotation. yay us.
-                        if func not in func_occurrence_dict:
-                            func_occurrence_dict[func] = {}
-                            func_occurrence_dict[func]['accession'] = set([accession])
-                            for genome_name in self.genomes:
-                                func_occurrence_dict[func][genome_name] = 0
-                            func_occurrence_dict[func][g] += 1
-                        else:
-                            # a functional annotation could have multiple accessions
-                            # for example, K00844 and K12407 are both hexokinase/glucokinase
-                            func_occurrence_dict[func]['accession'].add(accession)
-                            func_occurrence_dict[func][g] += 1
+                    # by keying with the function name, we can automatically merge some accessions with same functional annotation. yay us.
+                    if func not in func_occurrence_dict:
+                        func_occurrence_dict[func] = {}
+                        func_occurrence_dict[func]['accession'] = set([acc])
+                        for genome_name in self.genomes:
+                            func_occurrence_dict[func][genome_name] = 0
+                        func_occurrence_dict[func][g] += 1
+                    else:
+                        # a functional annotation could have multiple accessions
+                        # for example, K00844 and K12407 are both hexokinase/glucokinase
+                        func_occurrence_dict[func]['accession'].add(acc)
+                        func_occurrence_dict[func][g] += 1
 
         func_occurrence_dataframe = pd.DataFrame.from_dict(func_occurrence_dict)
         func_occurrence_dataframe.drop('accession', inplace=True)
