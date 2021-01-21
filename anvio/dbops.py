@@ -1686,6 +1686,11 @@ class PanSuperclass(object):
             return (None, None)
 
         most_common_accession, most_common_function = functions_counter.most_common()[0][0].split('|||')
+        
+        # sometimes there is more than one annotation for the most common function. In these cases, we arbitrarily take the first one
+        if '!!!' in most_common_accession:
+            most_common_accession = most_common_accession.split('!!!')[0]
+            most_common_function = most_common_function.split('!!!')[0]
 
         return (most_common_accession, most_common_function)
 
