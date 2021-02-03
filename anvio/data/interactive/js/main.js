@@ -1454,6 +1454,7 @@ function serializeSettings(use_layer_names) {
     state['max-font-size-label'] = $('#max_font_size_label').val();
     state['draw-guide-lines'] = $('#draw_guide_lines').val();
     state['state-name'] = current_state_name;
+    state['temp-intensity-legend'] = $('#temp_intensity_legend').is(':checked')
     //
     // grab support value user input, store in state
     state['show-support-values'] = $('#support_value_checkbox').is(':checked')
@@ -2861,6 +2862,25 @@ function checkMaxSupportValueSeen() {
         // set the min/max values since we clearly know them by now.
         $('#support_range_low').val(min_branch_support_value_seen);
         $('#support_range_high').val(max_branch_support_value_seen);
+    }
+}
+
+function tempIntensityLegend(){
+    let showLegend = $('#temp_intensity_legend').is(':checked')
+
+    if(showLegend){
+        console.log('beep')
+
+        let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute("fill", "#000");
+        rect.setAttribute('fill-opacity', 1);
+        rect.setAttribute('x', 100);
+        rect.setAttribute('y', 100);
+        rect.setAttribute('height', 500);
+        rect.setAttribute('width', 500);
+        rect.setAttribute('stroke-width', 5)
+
+        document.getElementById('panel-center').appendChild(rect)
     }
 }
 
