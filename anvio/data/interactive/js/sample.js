@@ -688,7 +688,7 @@ function drawSamplesLayers(settings) {
                 var color = samples_categorical_colors[group][samples_layer_name][value];
                 var size  = samples_layer_boundaries[i][1] - samples_layer_boundaries[i][0];
 
-                var rect = drawPhylogramRectangle('samples',
+                var rect = drawPhylogramRectangle('samples', // TODO this is where the sample rects are drawn
                     'samples',
                     layer_boundaries[layer_index][0],
                     0 - samples_layer_boundaries[i][0] - (size / 2),
