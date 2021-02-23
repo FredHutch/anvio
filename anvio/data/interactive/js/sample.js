@@ -429,8 +429,8 @@ function buildSamplesTable(samples_layer_order, samples_layers) {
                 '<td>n/a</td>' +
                 '<td style="width: 50px;">' + 
                     '<select style="width: 50px;" class="type" onChange="togglePickerStart(this);">' +
-                    '        <option value="text"{option-type-text}>Text</option>' +
                     '        <option value="color"{option-type-color}>Color</option>' +
+                    '        <option value="text"{option-type-text}>Text</option>' +
                     '        <option value="both"{option-type-both}>Both</option>' + // TODO keep track of this plz 
                     '</select>' +
                 '</td>' + 
@@ -695,6 +695,15 @@ function drawSamplesLayers(settings) {
                 var size  = samples_layer_boundaries[i][1] - samples_layer_boundaries[i][0];
 
                 let displayType = settings['samples-layers']['default']['categorical']['type']
+                let fillOpacity
+
+                if(displayType === 'text'){
+                    fillOpacity = 0
+                } else if (displayType === 'color'){
+                    fillOpacity = 1
+                } else {
+                    fillOpacity = .3
+                }
 
                 drawText( 
                     'samples',
@@ -706,23 +715,34 @@ function drawSamplesLayers(settings) {
                     'center'
                 )
 
-                var rect = drawPhylogramRectangle('samples', // TODO this is where the sample rects are drawn
-                    'samples',
-                    layer_boundaries[layer_index][0],
-                    0 - samples_layer_boundaries[i][0] - (size / 2),
-                    size,
-                    layer_boundaries[layer_index][1] - layer_boundaries[layer_index][0],
-                    color,
-                    .2, // variable for when we want to render text inside box ?
-                    true);
-
+                var rect = drawPhylogramRectangle('samples', 
+                'samples',
+                layer_boundaries[layer_index][0],
+                0 - samples_layer_boundaries[i][0] - (size / 2),
+                size,
+                layer_boundaries[layer_index][1] - layer_boundaries[layer_index][0],
+                color,
+                fillOpacity, 
+                true);
+                
                 rect.setAttribute('sample-name', sample_name);
                 rect.setAttribute('sample-group', group);
                 rect.setAttribute('layer-name', samples_layer_name);
+
+                if(displayType === 'text'){
+                    rect.setAttribute('stroke-width', 3) 
+                    rect.setAttribute('stroke-opacity', 1) 
+                    rect.setAttribute('stroke', 'black') 
+                } else if (displayType === 'both'){
+                    rect.setAttribute('stroke-width', 3) 
+                    rect.setAttribute('stroke-opacity', 1) 
+                    rect.setAttribute('stroke', color) 
+                }
+               
             }
         }
     }
-
+    
     if (!(samples_start == -1 || samples_end == -1))
     {
         // draw sample backgrounds and titles.
