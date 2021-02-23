@@ -431,7 +431,7 @@ function buildSamplesTable(samples_layer_order, samples_layers) {
                     '<select style="width: 50px;" class="type" onChange="togglePickerStart(this);">' +
                     '        <option value="text"{option-type-text}>Text</option>' +
                     '        <option value="color"{option-type-color}>Color</option>' +
-                    '        <option value="both"{option-type-both}>Both</option>' +
+                    '        <option value="both"{option-type-both}>Both</option>' + // TODO keep track of this plz 
                     '</select>' +
                 '</td>' + 
                 '<td>n/a</td>' +
@@ -693,6 +693,8 @@ function drawSamplesLayers(settings) {
 
                 var color = samples_categorical_colors[group][samples_layer_name][value];
                 var size  = samples_layer_boundaries[i][1] - samples_layer_boundaries[i][0];
+
+                let displayType = settings['samples-layers']['default']['categorical']['type']
 
                 drawText( 
                     'samples',
