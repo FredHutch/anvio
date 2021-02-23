@@ -1061,7 +1061,7 @@ function buildLayersTable(order, settings)
         var layer_name = layerdata[0][layer_id];
 
         var short_name = (layer_name.indexOf('!') > -1) ? layer_name.split('!')[0] : layer_name;
-        short_name = (short_name.length > 10) ? short_name.slice(0,10) + "..." : short_name;
+        short_name = (short_name.length > 10) ? short_name.slice(0,10) + "..." : short_name; // TODO truncating long layer names
 
         var hasViewSettings = false;
         if (typeof settings !== 'undefined' && typeof settings[layer_id] !== 'undefined') {

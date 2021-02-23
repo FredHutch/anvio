@@ -427,7 +427,13 @@ function buildSamplesTable(samples_layer_order, samples_layers) {
                 '<td><img class="drag-icon" src="images/drag.gif" /></td>' +
                 '<td title="{name}" class="titles">{short-name}</td>' +
                 '<td>n/a</td>' +
-                '<td style="width: 50px;">n/a</td>' +
+                '<td style="width: 50px;">' + 
+                    '<select style="width: 50px;" class="type" onChange="togglePickerStart(this);">' +
+                    '        <option value="text"{option-type-text}>Text</option>' +
+                    '        <option value="color"{option-type-color}>Color</option>' +
+                    '        <option value="both"{option-type-both}>Both</option>' +
+                    '</select>' +
+                '</td>' + 
                 '<td>n/a</td>' +
                 '<td><input class="input-height" type="text" size="3" value="{height}"></input></td>' +
                 '<td><input class="input-margin" type="text" size="3" value="{margin}"></input></td>' +
