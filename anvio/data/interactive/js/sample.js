@@ -688,6 +688,16 @@ function drawSamplesLayers(settings) {
                 var color = samples_categorical_colors[group][samples_layer_name][value];
                 var size  = samples_layer_boundaries[i][1] - samples_layer_boundaries[i][0];
 
+                drawText( 
+                    'samples',
+                    { 'x' : layer_boundaries[layer_index][0] + 90,
+                      'y' :  0 - samples_layer_boundaries[i][0] - (size / 2),
+                    }, 
+                    value, // categorical layer text data
+                    40,
+                    'center'
+                )
+
                 var rect = drawPhylogramRectangle('samples', // TODO this is where the sample rects are drawn
                     'samples',
                     layer_boundaries[layer_index][0],
@@ -695,7 +705,7 @@ function drawSamplesLayers(settings) {
                     size,
                     layer_boundaries[layer_index][1] - layer_boundaries[layer_index][0],
                     color,
-                    1,
+                    .2, // variable for when we want to render text inside box ?
                     true);
 
                 rect.setAttribute('sample-name', sample_name);
