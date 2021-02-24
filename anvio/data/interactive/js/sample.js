@@ -696,6 +696,13 @@ function drawSamplesLayers(settings) {
 
                 let displayType = settings['samples-layers']['default']['categorical']['type']
                 let fillOpacity
+                let parseValue =  'a lil guy'.split(' ') //value.split(' ') split value into individual words
+                let xOffset = 90
+                let yOffset = -10
+                let textSize
+                let textSizeModifier 
+                let textX = layer_boundaries[layer_index][0]
+                let textY = 0 - samples_layer_boundaries[i][0] - (size / 2)
 
                 if(displayType === 'text'){
                     fillOpacity = 0
@@ -704,16 +711,22 @@ function drawSamplesLayers(settings) {
                 } else {
                     fillOpacity = .3
                 }
+                parseValue.length > 2 ? textSizeModifier = -25 : textSizeModifier = 0 // many word? small text
+                
+                for(let i = 0; i < parseValue.length; i++){
+                    parseValue[i].length > 10 ? textSize = 30 : textSize = 45; // long word? small text                 
+                    drawText( 
+                        'samples',
+                        { 'x' :  textX + xOffset,
+                          'y' :  textY + yOffset ,
+                        }, 
+                        parseValue[i], // categorical layer text data
+                        textSize + textSizeModifier,
+                        'center'
+                    )
 
-                drawText( 
-                    'samples',
-                    { 'x' : layer_boundaries[layer_index][0] + 90,
-                      'y' :  0 - samples_layer_boundaries[i][0] - (size / 2),
-                    }, 
-                    value, // categorical layer text data
-                    40,
-                    'center'
-                )
+                    yOffset += textSize + textSizeModifier // hacky way of hitting 'return'
+                }
 
                 var rect = drawPhylogramRectangle('samples', 
                 'samples',
