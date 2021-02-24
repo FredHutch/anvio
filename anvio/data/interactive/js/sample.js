@@ -696,7 +696,7 @@ function drawSamplesLayers(settings) {
 
                 let displayType = settings['samples-layers']['default']['categorical']['type']
                 let fillOpacity
-                let parseValue =  'a lil guy'.split(' ') //value.split(' ') split value into individual words
+                let parseValue =  'bacteriods fragilis'.split(' ') //value.split(' ') split value into individual words
                 let xOffset = 90
                 let yOffset = -10
                 let textSize
@@ -714,7 +714,7 @@ function drawSamplesLayers(settings) {
                 parseValue.length > 2 ? textSizeModifier = -25 : textSizeModifier = 0 // many word? small text
                 
                 for(let i = 0; i < parseValue.length; i++){
-                    parseValue[i].length > 10 ? textSize = 30 : textSize = 45; // long word? small text                 
+                    parseValue[i].length > 6 ? textSize = 30 : textSize = 45; // long word? small text                 
                     drawText( 
                         'samples',
                         { 'x' :  textX + xOffset,
