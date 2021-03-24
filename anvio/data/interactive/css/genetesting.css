@@ -1,0 +1,12 @@
+.container {
+    width: 95%; //this is being overwritten though.
+    align-content: center;
+    margin: 0 auto 20px auto;
+    background: rgba(255,255,255,0.5);
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+    padding: 20px 30px;
+    touch-action: none;
+}
+
+#myCanvas {
+}
