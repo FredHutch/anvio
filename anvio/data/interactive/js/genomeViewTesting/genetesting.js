@@ -14,8 +14,7 @@ var genomes;
 var spacing; // genome spacing
 var showLabels = true; // show genome labels?
 
-var alignToGC = 'GC_X'
-
+var alignToGC = null;
 
 function loadAll() {
   document.title = "Testing Genome View"
@@ -33,17 +32,7 @@ function loadAll() {
 
   genomes = [contig437, contig1001, contig798];
 
-  //TESTING
-  for(genes of genomes) {
-    let g = genes[genes.length-1].stop_in_split;
-    if(g > genomeMax) genomeMax = g;
-  }
-  //canvas.width = genomeMax+200;
-
-  for(var i = 0; i < genomes.length; i++) {
-    var genome = genomes[i];
-    addGenome(/*genome[1].split.substring(0,6)*/'Genome_'+(i+1), genome, i+1);
-  }
+  draw();
 
   // zooming and panning
   // http://fabricjs.com/fabric-intro-part-5#pan_zoom
@@ -123,24 +112,65 @@ function loadAll() {
   });
 }
 
-function addGenome(label, gene_list, y) {
-  // line
-  canvas.add(new fabric.Line([0,0,genomeMax,0], {left: 0,
-        top: 30*y - 4,
-        stroke: 'black',
-        strokeWidth: 2,
-        selectable: false}));
+function draw() {
+  for(genes of genomes) {
+    let g = genes[genes.length-1].stop_in_split;
+    if(g > genomeMax) genomeMax = g;
+  }
 
+  for(var i = 0; i < genomes.length; i++) {
+    var genome = genomes[i];
+    addGenome('Genome_'+(i+1), genome, i+1);
+  }
+}
+
+function alignToCluster(gc) {
+  if(!gc || gc in mock_gene_clusters) {
+    alignToGC = gc;
+  } else {
+    console.log('Warning: ' + gc + ' is not a gene cluster in data structure');
+  }
+  canvas.clear();
+  draw();
+
+  /*for(var i = 0; i < genomes.length; i++) {
+    var genome = genomes[i];
+    // y = i+1
+
+    var offsetX = 0;
+    if(alignToGC) {
+      var targetGeneID = mock_gene_clusters[alignToGC][label];
+      var targetGene = gene_list.find(gene => gene.gene_callers_id == targetGeneID);
+      var genePos = targetGene.start_in_split + (targetGene.stop_in_split - targetGene.start_in_split) / 2;
+      var windowCenter = canvas.getWidth()/2 - canvas.viewportTransform[4];
+      offsetX = windowCenter - genePos;
+    }
+
+    // instead of clearing and redrawing all objects, just shift them:
+      // set line's left to offsetX
+      // set each gene's left to 1.5+gene.start_in_split+offsetX
+      // will need to save ID's of lines and genes in order to access them again
+  }*/
+}
+
+function addGenome(label, gene_list, y) {
   var offsetX = 0;
   if(alignToGC) {
     var targetGeneID = mock_gene_clusters[alignToGC][label];
     var targetGene = gene_list.find(gene => gene.gene_callers_id == targetGeneID);
-    var genePos = (targetGene.stop_in_split - targetGene.start_in_split) / 2;
+    var genePos = targetGene.start_in_split + (targetGene.stop_in_split - targetGene.start_in_split) / 2;
     //var windowCenter = fabric.util.transformPoint({x:canvas.getWidth()/2,y:0}, canvas.viewportTransform)['x'];
-    var windowCenter = canvas.getWidth()/2;
+    var windowCenter = canvas.getWidth()/2 - canvas.viewportTransform[4]; // canvas.getWidth()/2 is clientX of center of screen
     offsetX = windowCenter - genePos;
-    console.log(offsetX);
+    console.log('offsetX: ' + offsetX + ', genePos: ' + genePos + ', windowCenter: ' + windowCenter);
   }
+
+  // line
+  canvas.add(new fabric.Line([0,0,genomeMax,0], {left: offsetX,
+        top: 30*y - 4,
+        stroke: 'black',
+        strokeWidth: 2,
+        selectable: false}));
 
   // here we can either draw genes individually, or collectively as a group
   // grouping allows you to transform them all at once, but makes selecting individual arrows difficult
@@ -152,7 +182,7 @@ function addGenome(label, gene_list, y) {
     //geneGroup.addWithUpdate(geneArrow(gene,y));   // IMPORTANT: only way to select is to select the group or use indices. maybe don't group them but some alternative which lets me scale them all at once?
     var geneObj = geneArrow(gene,y);
     if(alignToGC) {
-      //geneObj.left += offsetX;
+      geneObj.left += offsetX;
     }
     canvas.add(geneObj);
   }
