@@ -11,8 +11,10 @@ var genomes;
 
 // Settings vars
 
-var spacing; // genome spacing
+var spacing = 30; // genome spacing
 var showLabels = true; // show genome labels?
+var showScale = true; // show nt scale?
+var scale = 100; // nt scale intervals
 
 var alignToGC = null;
 
@@ -118,9 +120,40 @@ function draw() {
     if(g > genomeMax) genomeMax = g;
   }
 
-  for(var i = 0; i < genomes.length; i++) {
+  var i;
+  for(i = 0; i < genomes.length; i++) {
     var genome = genomes[i];
     addGenome('Genome_'+(i+1), genome, i+1);
+  }
+
+  if(showScale) {
+    for(var w = 0; w < genomeMax; w+=scale) {
+      canvas.add(new fabric.Line([0,0,0,20], {left: w,
+            top: (i+1)*(spacing)-24,
+            stroke: 'black',
+            strokeWidth: 1,
+            fontSize: 10,
+            fontFamily: 'sans-serif'}));
+
+      canvas.add(new fabric.Text(w/1000 + " kB", {left: w+5,
+            top: (i+1)*(spacing)-24,
+            stroke: 'black',
+            strokeWidth: .25,
+            fontSize: 15,
+            fontFamily: 'sans-serif'}));
+    }
+
+    canvas.add(new fabric.Line([0,0,100,0], {left: 0,
+          top: (i+1)*(1.25*spacing)-4,
+          stroke: 'black',
+          strokeWidth: 2,
+          selectable: false}));
+    canvas.add(new fabric.Text("100 nts", {left: 15,
+          top: (i+1)*(1.25*spacing)-4,
+          stroke: 'black',
+          strokeWidth: 1,
+          fontSize: 20,
+          fontFamily: 'sans-serif'}));
   }
 }
 
@@ -167,7 +200,7 @@ function addGenome(label, gene_list, y) {
 
   // line
   canvas.add(new fabric.Line([0,0,genomeMax,0], {left: offsetX,
-        top: 30*y - 4,
+        top: spacing*y - 4,
         stroke: 'black',
         strokeWidth: 2,
         selectable: false}));
@@ -204,7 +237,7 @@ function geneArrow(gene, y) {
     id: 'arrow',
     gene: gene,   // better not to store entire gene object, but a pointer/id to find it in the genomes dict?
     selectable: false,
-    top: -11+30*y,
+    top: -11+spacing*y,
     left: 1.5+gene.start_in_split,
     scaleX: 0.5,
     scaleY: 0.5,
@@ -274,7 +307,7 @@ function addGene(gene, y) {
   arrow.set({
     id: 'arrow',
     selectable: false,
-    top: -11+30*y,
+    top: -11+spacing*y,
     left: 1.5+gene.start_in_split,
     scaleX: 0.5,
     scaleY: 0.5,
