@@ -133,14 +133,16 @@ function draw() {
             stroke: 'black',
             strokeWidth: 1,
             fontSize: 10,
-            fontFamily: 'sans-serif'}));
+            fontFamily: 'sans-serif',
+            selectable: false}));
 
       canvas.add(new fabric.Text(w/1000 + " kB", {left: w+5,
             top: (i+1)*(spacing)-24,
             stroke: 'black',
             strokeWidth: .25,
             fontSize: 15,
-            fontFamily: 'sans-serif'}));
+            fontFamily: 'sans-serif',
+            selectable: false}));
     }
 
     canvas.add(new fabric.Line([0,0,100,0], {left: 0,
@@ -153,7 +155,8 @@ function draw() {
           stroke: 'black',
           strokeWidth: 1,
           fontSize: 20,
-          fontFamily: 'sans-serif'}));
+          fontFamily: 'sans-serif',
+          selectable: false}));
   }
 }
 
