@@ -18,6 +18,11 @@ var scale = 100; // nt scale intervals
 
 var alignToGC = null;
 
+var color_db;
+var cog_annotated = true, kegg_annotated = false;
+// doesn't make sense to iterate through every gene with dozens of genomes...
+// will need to find an efficient way to find these automatically
+
 function toggleSettingsPanel() {
     $('#settings-panel').toggle();
 
@@ -81,6 +86,23 @@ $(document).ready(function() {
     }
 
     genomes = [contig437, contig1001, contig798];
+
+    $('#gene_color_order').append($('<option>', {
+      value: 'Source',
+      text: 'Source'
+    }));
+    if(cog_annotated) {
+      $('#gene_color_order').append($('<option>', {
+        value: 'COG',
+        text: 'COG'
+      }));
+    }
+    if(kegg_annotated) {
+      $('#gene_color_order').append($('<option>', {
+        value: 'KEGG',
+        text: 'KEGG'
+      }));
+    }
 
     draw();
 
@@ -171,6 +193,12 @@ $(document).ready(function() {
         if(ev.which == 83 && !$('#geneClusterInput').is(':focus')) { // S = 83
           toggleSettingsPanel();
         }
+    });
+    $('#gene_color_order').on('change', function() {
+        color_db = $(this).val();
+        canvas.clear();
+        draw();
+        $(this).blur();
     });
   }
 
@@ -288,11 +316,32 @@ $(document).ready(function() {
 
   function geneArrow(gene, y) {
     var cag = null;
+    var color = 'gray';
     if(gene.functions) {
-        if(gene.functions["COG14_CATEGORY"]) cag = gene.functions["COG14_CATEGORY"][0][0];
-        if(gene.functions["COG20_CATEGORY"]) cag = gene.functions["COG20_CATEGORY"][0][0];
+      switch(color_db) {
+        case 'COG':
+          if(gene.functions["COG14_CATEGORY"]) cag = gene.functions["COG14_CATEGORY"][0][0];
+          if(gene.functions["COG20_CATEGORY"]) cag = gene.functions["COG20_CATEGORY"][0][0];
+          color = cag in default_COG_colors ? default_COG_colors[cag] : 'gray';
+          break;
+        case 'KEGG':
+          if(gene.functions.hasOwnProperty("KEGG_Class") && gene.functions.KEGG_Class != null) {
+            cag = getCategoryForKEGGClass(gene.functions["KEGG_Class"][1]);
+          }
+          color = cag in default_KEGG_colors ? default_KEGG_colors[cag] : 'gray';
+          break;
+        default:
+          if (gene.source.startsWith('Ribosomal_RNA')) {
+            cag = 'rRNA';
+          } else if (gene.source == 'Transfer_RNAs') {
+            cag = 'tRNA';
+          } else if (gene.functions !== null) {
+            cag = 'Function';
+          }
+          color = cag in default_source_colors ? default_source_colors[cag] : 'gray';
+      }
     }
-    var color = (cag && cag in default_COG_colors) ? default_COG_colors[cag] : 'gray';
+    /* Issue here: each genome might be differentially annotated... how to make sure all have COG annotations for example? */
 
     var length = gene.stop_in_split-gene.start_in_split;
     var arrow = new fabric.Path('M 0 0 L ' + length + ' 0 L ' + length + ' 10 L 0 10 M ' + length + ' 0 L ' + length + ' 20 L ' + (25+length) + ' 5 L ' + length + ' -10 z');
@@ -313,7 +362,23 @@ $(document).ready(function() {
     return arrow;
   }
 
+  function getCategoryForKEGGClass(class_str) {
+    if(class_str == null) return null;
+
+    var category_name = getClassFromKEGGAnnotation(class_str);
+    return getKeyByValue(KEGG_categories, category_name);
+  }
+
+  function getClassFromKEGGAnnotation(class_str) {
+    return class_str.substring(17, class_str.indexOf(';', 17));
+  }
+
+  // https://stackoverflow.com/questions/9907419/how-to-get-a-key-in-a-javascript-object-by-its-value/36705765
+  function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
   ///////////////////
+
   var mock_gene_clusters = {'GC_X': {'Genome_1': 14902,
                                      'Genome_2': 19391,
                                      'Genome_3': 18019},
