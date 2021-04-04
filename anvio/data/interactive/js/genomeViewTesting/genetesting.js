@@ -37,17 +37,18 @@ function toggleSettingsPanel() {
 
 $(document).ready(function() {
   function loadAll() {
-    document.title = "Testing Genome View"
+    document.title = "Anvi'o Genome View"
 
     canvas = new fabric.Canvas('myCanvas');
     $('#tooltip-body').hide() // set initual tooltip hide value
+    $('#toggle_label_box').attr("checked", showLabels);
 
     // can either set it on the canvas to check for all arrows, or when arrow is created.
     canvas.on('mouse:down', function(options) {
       if(options.target && options.target.id == 'arrow') {
         options.target.set('fill', options.target.fill=="red" ? "blue" : 'red');
         var testid = options.target.gene.gene_callers_id;
-        // console.log("Gene cluster: " + idToGC[testid]);
+        console.log(options.target.gene);
       }
     });
 
@@ -200,6 +201,12 @@ $(document).ready(function() {
         draw();
         $(this).blur();
     });
+    $('#toggle_label_box').on('change', function() {
+      showLabels = !showLabels;
+      alignToGC = null;
+      canvas.clear();
+      draw();
+    });
   }
 
   function draw() {
@@ -211,12 +218,13 @@ $(document).ready(function() {
     var i;
     for(i = 0; i < genomes.length; i++) {
       var genome = genomes[i];
-      addGenome('Genome_'+(i+1), genome, i+1);
+      var label = genome[0].split.substring(9,genome[0].split.indexOf('_', 9));
+      addGenome(label, genome, i+1);
     }
 
     if(showScale) {
       for(var w = 0; w < genomeMax; w+=scale) {
-        canvas.add(new fabric.Line([0,0,0,20], {left: w,
+        canvas.add(new fabric.Line([0,0,0,20], {left: w+(showLabels?120:0),
               top: (i+1)*(spacing)-24,
               stroke: 'black',
               strokeWidth: 1,
@@ -224,7 +232,7 @@ $(document).ready(function() {
               fontFamily: 'sans-serif',
               selectable: false}));
 
-        canvas.add(new fabric.Text(w/1000 + " kB", {left: w+5,
+        canvas.add(new fabric.Text(w/1000 + " kB", {left: w+5+(showLabels?120:0),
               top: (i+1)*(spacing)-24,
               stroke: 'black',
               strokeWidth: .25,
@@ -233,12 +241,12 @@ $(document).ready(function() {
               selectable: false}));
       }
 
-      canvas.add(new fabric.Line([0,0,100,0], {left: 0,
+      canvas.add(new fabric.Line([0,0,100,0], {left: (showLabels?120:0),
             top: (i+1)*(1.25*spacing)-4,
             stroke: 'black',
             strokeWidth: 2,
             selectable: false}));
-      canvas.add(new fabric.Text("100 nts", {left: 15,
+      canvas.add(new fabric.Text("100 nts", {left: 15+(showLabels?120:0),
             top: (i+1)*(1.25*spacing)-4,
             stroke: 'black',
             strokeWidth: 1,
@@ -251,6 +259,8 @@ $(document).ready(function() {
   function alignToCluster(gc) {
     if(!gc || gc in mock_gene_clusters) {
       alignToGC = gc;
+      showLabels = !gc; // only show labels if changing to default view
+      $('#toggle_label_box').attr("checked", showLabels);
     } else {
       console.log('Warning: ' + gc + ' is not a gene cluster in data structure');
     }
@@ -289,8 +299,13 @@ $(document).ready(function() {
       console.log('offsetX: ' + offsetX + ', genePos: ' + genePos + ', windowCenter: ' + windowCenter);
     }
 
+    // label
+    if(showLabels) {
+      canvas.add(new fabric.Text(label, {top: spacing*y-10, selectable: false, fontSize: 15, fontFamily: 'sans-serif', fontWeight: 'bold'}));
+    }
+
     // line
-    canvas.add(new fabric.Line([0,0,genomeMax,0], {left: offsetX,
+    canvas.add(new fabric.Line([0,0,genomeMax,0], {left: offsetX+(showLabels?120:0),
           top: spacing*y - 4,
           stroke: 'black',
           strokeWidth: 2,
@@ -305,6 +320,9 @@ $(document).ready(function() {
       //addGene(gene, y);
       //geneGroup.addWithUpdate(geneArrow(gene,y));   // IMPORTANT: only way to select is to select the group or use indices. maybe don't group them but some alternative which lets me scale them all at once?
       var geneObj = geneArrow(gene,y);
+      if(showLabels) {
+        geneObj.left += 120;
+      }
       if(alignToGC) {
         geneObj.left += offsetX;
       }
@@ -379,12 +397,12 @@ $(document).ready(function() {
   }
   ///////////////////
 
-  var mock_gene_clusters = {'GC_X': {'Genome_1': 14902,
-                                     'Genome_2': 19391,
-                                     'Genome_3': 18019},
-                            'GC_Y': {'Genome_1': 14937,
-                                     'Genome_2': 19393,
-                                     'Genome_3': 18011}
+  var mock_gene_clusters = {'GC_X': {'contig437': 14902,
+                                     'contig1001': 19391,
+                                     'contig798': 18019},
+                            'GC_Y': {'contig437': 14937,
+                                     'contig1001': 19393,
+                                     'contig798': 18011}
   }
 
   var idToGC = {
